@@ -1,1 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Migrator — Migration History</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+ 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+:root {
+  --bg:        #0f1117;
+  --bg2:       #161b27;
+  --bg3:       #1e2535;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #e8eaf0;
+  --text2:     #8b92a8;
+  --text3:     #555d72;
+  --accent:    #6c63ff;
+  --accent2:   #8b84ff;
+  --accent-bg: rgba(108,99,255,0.12);
+  --success:   #22c55e;
+  --success-bg:rgba(34,197,94,0.1);
+  --warning:   #f59e0b;
+  --warning-bg:rgba(245,158,11,0.1);
+  --danger:    #ef4444;
+  --danger-bg: rgba(239,68,68,0.1);
+  --info:      #38bdf8;
+  --info-bg:   rgba(56,189,248,0.1);
+  --radius:    10px;
+  --radius-lg: 14px;
+  --sidebar-w: 220px;
+  --topbar-h:  56px;
+  --font:      'DM Sans', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+  --transition: 0.18s ease;
+}
+ 
+html, body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  height: 100%;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+ 
+a { text-decoration: none; color: inherit; }
 
+/* ── BUTTONS ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: #5a52e0; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-ghost:hover { background: var(--bg3); color: var(--text); }
+
+.btn-icon {
+  width: 32px; height: 32px;
+  padding: 0;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 8px;
+}
+.btn-icon:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+
+.btn-danger-ghost {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid rgba(239,68,68,0.2);
+}
+.btn-danger-ghost:hover { background: var(--danger-bg); }
+
+/* ── FORM ELEMENTS ───────────────────────────────────── */
+.form-group { margin-bottom: 18px; }
+
+.form-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 7px;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: var(--font);
+  outline: none;
+  transition: border-color var(--transition);
+}
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--text3); }
+.form-select option { background: var(--bg2); }
+
+.form-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.form-checkbox-row input[type="checkbox"] {
+  width: 15px; height: 15px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* admin.css */
+/* ── LAYOUT ─────────────────────────────────────────── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+ 
+/* ── SIDEBAR ─────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+ 
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+ 
+.logo-icon {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+ 
+.logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.logo-text span { color: var(--accent2); }
+ 
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 18px 18px 6px;
+}
+ 
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  margin: 2px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--text2);
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+}
+ 
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active {
+  background: var(--accent-bg);
+  color: var(--accent2);
+  font-weight: 500;
+}
+ 
+.nav-item .nav-icon { font-size: 17px; flex-shrink: 0; }
+ 
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 8px;
+  border-top: 1px solid var(--border);
+}
+ 
+/* ── MAIN ─────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+ 
+/* ── TOPBAR ──────────────────────────────────────────── */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+ 
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.page-title { font-size: 16px; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+
+.stat-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.stat-sub {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+.section-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+.td-muted { color: var(--text2); font-size: 12.5px; }
+.td-mono  { font-family: var(--mono); font-size: 12px; color: var(--text2); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-success { background: var(--success-bg); color: var(--success); }
+.badge-warning { background: var(--warning-bg); color: var(--warning); }
+.badge-danger  { background: var(--danger-bg);  color: var(--danger);  }
+.badge-info    { background: var(--info-bg);    color: var(--info);    }
+.badge-accent  { background: var(--accent-bg);  color: var(--accent2); }
+.badge-neutral { background: var(--bg3); color: var(--text2); }
+
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-size: 13px;
+  color: var(--text2);
+  width: 200px;
+  transition: border-color var(--transition);
+}
+.search-box:focus-within { border-color: var(--accent); }
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  width: 100%;
+}
+.search-box input::placeholder { color: var(--text3); }
+
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="ti ti-database" style="color:#fff;font-size:16px"></i></div>
+      <span class="logo-text">SQL <span>Migrator</span></span>
+    </div>
+    <nav style="flex:1;padding-top:8px">
+      <div class="nav-section-label">Admin</div>
+      <a href="admin_users.html"     class="nav-item"><i class="ti ti-users nav-icon"></i>Users</a>
+      <a href="admin_history.html"   class="nav-item active"><i class="ti ti-history nav-icon"></i>Migration history</a>
+      <a href="reports.html"   class="nav-item"><i class="ti ti-chart-bar nav-icon"></i>Reports</a>
+      <a href="admin_settings.html"  class="nav-item"><i class="ti ti-settings nav-icon"></i>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="login.html" class="nav-item" style="color:#ef4444"><i class="ti ti-logout nav-icon"></i>Sign out</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title">Migration history</span>
+        <div class="breadcrumb"><i class="ti ti-chevron-right" style="font-size:13px"></i><span>All records</span></div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <i class="ti ti-search" style="font-size:15px;flex-shrink:0"></i>
+          <input type="text" placeholder="Search file name…" oninput="filterTable(this.value)">
+        </div>
+        <select class="form-select" style="width:130px;padding:7px 10px" onchange="filterStatus(this.value)">
+          <option value="">All statuses</option>
+          <option value="success">Success</option>
+          <option value="warning">Warnings</option>
+          <option value="failed">Failed</option>
+        </select>
+        <button class="btn btn-ghost"><i class="ti ti-download" style="font-size:15px"></i>Export CSV</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--accent-bg);color:var(--accent2)"><i class="ti ti-transfer"></i></div>
+          <div class="stat-label">Total migrations</div>
+          <div class="stat-value">142</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--success-bg);color:var(--success)"><i class="ti ti-circle-check"></i></div>
+          <div class="stat-label">Successful</div>
+          <div class="stat-value" style="color:var(--success)">128</div>
+          <div class="stat-sub">90.1%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)"><i class="ti ti-alert-triangle"></i></div>
+          <div class="stat-label">With warnings</div>
+          <div class="stat-value" style="color:var(--warning)">11</div>
+          <div class="stat-sub">7.7%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--danger-bg);color:var(--danger)"><i class="ti ti-circle-x"></i></div>
+          <div class="stat-label">Failed</div>
+          <div class="stat-value" style="color:var(--danger)">3</div>
+          <div class="stat-sub">2.1%</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Migration records</span>
+          <span style="font-size:12px;color:var(--text3)">Showing 6 of 142</span>
+        </div>
+        <div class="table-wrap">
+          <table id="hist-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>File name</th>
+                <th>Source</th>
+                <th>Target</th>
+                <th>Run by</th>
+                <th>Date &amp; time</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th style="width:90px">Report</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-status="success">
+                <td class="td-muted">#142</td>
+                <td style="font-weight:500"><i class="ti ti-file" style="font-size:14px;color:var(--text3);margin-right:6px"></i>ecommerce_db.sql</td>
+                <td><span class="badge badge-warning">MySQL</span></td>
+                <td><span class="badge badge-accent">PostgreSQL</span></td>
+                <td class="td-muted">Arjun K.</td>
+                <td class="td-mono">Jun 4, 2026 10:32</td>
+                <td class="td-muted">2.4s</td>
+                <td><span class="badge badge-success">Success</span></td>
+                <td><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px"><i class="ti ti-download" style="font-size:13px"></i>Download</button></td>
+              </tr>
+              <tr data-status="warning">
+                <td class="td-muted">#141</td>
+                <td style="font-weight:500"><i class="ti ti-file" style="font-size:14px;color:var(--text3);margin-right:6px"></i>inventory.sql</td>
+                <td><span class="badge badge-warning">MySQL</span></td>
+                <td><span class="badge badge-accent">PostgreSQL</span></td>
+                <td class="td-muted">Priya V.</td>
+                <td class="td-mono">Jun 3, 2026 14:18</td>
+                <td class="td-muted">3.1s</td>
+                <td><span class="badge badge-warning">Warnings</span></td>
+                <td><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px"><i class="ti ti-download" style="font-size:13px"></i>Download</button></td>
+              </tr>
+              <tr data-status="success">
+                <td class="td-muted">#140</td>
+                <td style="font-weight:500"><i class="ti ti-file" style="font-size:14px;color:var(--text3);margin-right:6px"></i>users_schema.sql</td>
+                <td><span class="badge badge-warning">MySQL</span></td>
+                <td><span class="badge badge-accent">PostgreSQL</span></td>
+                <td class="td-muted">Sneha M.</td>
+                <td class="td-mono">Jun 2, 2026 09:05</td>
+                <td class="td-muted">1.8s</td>
+                <td><span class="badge badge-success">Success</span></td>
+                <td><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px"><i class="ti ti-download" style="font-size:13px"></i>Download</button></td>
+              </tr>
+              <tr data-status="failed">
+                <td class="td-muted">#139</td>
+                <td style="font-weight:500"><i class="ti ti-file" style="font-size:14px;color:var(--text3);margin-right:6px"></i>legacy_data.sql</td>
+                <td><span class="badge badge-warning">MySQL</span></td>
+                <td><span class="badge badge-accent">PostgreSQL</span></td>
+                <td class="td-muted">Rahul N.</td>
+                <td class="td-mono">Jun 1, 2026 16:44</td>
+                <td class="td-muted">0.6s</td>
+                <td><span class="badge badge-danger">Failed</span></td>
+                <td><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px"><i class="ti ti-download" style="font-size:13px"></i>Download</button></td>
+              </tr>
+              <tr data-status="warning">
+                <td class="td-muted">#138</td>
+                <td style="font-weight:500"><i class="ti ti-file" style="font-size:14px;color:var(--text3);margin-right:6px"></i>orders_v2.sql</td>
+                <td><span class="badge badge-warning">MySQL</span></td>
+                <td><span class="badge badge-accent">PostgreSQL</span></td>
+                <td class="td-muted">Arjun K.</td>
+                <td class="td-mono">May 30, 2026 11:20</td>
+                <td class="td-muted">4.2s</td>
+                <td><span class="badge badge-warning">Warnings</span></td>
+                <td><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px"><i class="ti ti-download" style="font-size:13px"></i>Download</button></td>
+              </tr>
+              <tr data-status="success">
+                <td class="td-muted">#137</td>
+                <td style="font-weight:500"><i class="ti ti-table" style="font-size:14px;color:var(--text3);margin-right:6px"></i>product_schema.xlsx</td>
+                <td><span class="badge badge-neutral">Excel</span></td>
+                <td><span class="badge badge-accent">PostgreSQL</span></td>
+                <td class="td-muted">Sneha M.</td>
+                <td class="td-mono">May 28, 2026 08:55</td>
+                <td class="td-muted">1.2s</td>
+                <td><span class="badge badge-success">Success</span></td>
+                <td><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px"><i class="ti ti-download" style="font-size:13px"></i>Download</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main><!-- /main -->
+</div><!-- /app -->
+
+<script>
+function filterTable(query) {
+  const rows = document.querySelectorAll('#hist-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function filterStatus(status) {
+  const rows = document.querySelectorAll('#hist-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = (!status || row.dataset.status === status) ? '' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>
