@@ -174,15 +174,42 @@ class SchemaGeneratorResource(Resource):
 
     def post(self):
         payload = request.get_json(silent=True) or {}
-        defaults = {
-            "file_path": None,
-            "table_name": "<FRONTEND_TABLE_NAME>",
-        }
-        if not payload:
-            payload = get_placeholder_data(defaults)
 
-        schema_sql = generate_create_table_schema(
-            payload.get("file_path"),
-            payload.get("table_name"),
-        )
-        return {"schema_sql": schema_sql}, 200
+        if not payload:
+            return {
+                "message": "Request body is required."
+            }, 400
+
+        file_path = payload.get("file_path")
+        table_name = payload.get("table_name")
+
+        if not file_path:
+            return {
+                "message": "file_path is required."
+            }, 400
+
+        if "<FRONTEND" in str(file_path):
+            return {
+                "message": "Replace placeholder file path with a real file path."
+            }, 400
+
+        try:
+            schema_sql = generate_create_table_schema(
+                file_path,
+                table_name,
+            )
+
+            return {
+                "schema_sql": schema_sql
+            }, 200
+
+        except FileNotFoundError:
+            return {
+                "message": f"File not found: {file_path}"
+            }, 404
+
+        except Exception as exc:
+            return {
+                "message": "Schema generation failed.",
+                "error": str(exc)
+            }, 500
