@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Register</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#0f172a;
+}
+
+.card{
+width:500px;
+background:#111827;
+padding:40px;
+border-radius:24px;
+box-shadow:
+0 20px 40px rgba(0,0,0,.35),
+0 0 0 1px rgba(255,255,255,.04);
+}
+
+h1{
+text-align:center;
+color:white;
+margin-bottom:8px;
+}
+
+.subtitle{
+text-align:center;
+color:#94a3b8;
+margin-bottom:25px;
+}
+
+input{
+width:100%;
+padding:15px;
+background:#1e293b;
+border:1px solid #334155;
+border-radius:12px;
+margin-bottom:15px;
+color:white;
+}
+
+.error{ color:#fb7185; font-size:13px; margin-top:-10px; margin-bottom:12px; display:none; }
+.success{ color:#34d399; font-size:14px; margin-top:10px; text-align:center; display:none; }
+
+input:focus{
+border-color:#2563eb;
+outline:none;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#2563eb;
+border:none;
+border-radius:12px;
+color:white;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+.login{
+text-align:center;
+margin-top:20px;
+color:#94a3b8;
+}
+
+.login a{
+color:#60a5fa;
+text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Create Account</h1>
+
+<p class="subtitle">
+Create your SQL Migrator admin account
+</p>
+
+<form id="register-form" novalidate>
+
+<input type="text" id="fullName" name="fullName" placeholder="Full Name">
+<div class="error" id="name-error"></div>
+
+<input type="text" id="username" name="username" placeholder="Username (3-20 chars)">
+<div class="error" id="username-error"></div>
+
+<input type="email" id="email" name="email" placeholder="you@gmail.com">
+<div class="error" id="email-error"></div>
+
+<input type="password" id="password" name="password" placeholder="Password">
+<div class="error" id="password-error"></div>
+
+<input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+<div class="error" id="confirm-error"></div>
+
+<button type="submit">Create Account</button>
+
+<div class="success" id="register-success">Account created successfully.</div>
+
+</form>
+
+<div class="login">
+Already have an account?
+<a href="login.html">Sign In</a>
+</div>
+
+</div>
+
+</body>
+</html>
+ 
+<script>
+(function(){
+	const form = document.getElementById('register-form');
+	const fullName = document.getElementById('fullName');
+	const username = document.getElementById('username');
+	const email = document.getElementById('email');
+	const password = document.getElementById('password');
+	const confirmPassword = document.getElementById('confirmPassword');
+
+	const nameErr = document.getElementById('name-error');
+	const usernameErr = document.getElementById('username-error');
+	const emailErr = document.getElementById('email-error');
+	const pwdErr = document.getElementById('password-error');
+	const confirmErr = document.getElementById('confirm-error');
+	const success = document.getElementById('register-success');
+
+	function validateName(value){
+		if(!value || !value.trim()) return 'Full name is required.';
+		const first = value.trim().charAt(0);
+		if(first !== first.toUpperCase()) return 'Full name must start with an uppercase letter.';
+		return '';
+	}
+
+	function validateEmail(value){
+		if(!value || !value.trim()) return 'Email is required.';
+		const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if(!re.test(value)) return 'Enter a valid email address.';
+		if(!value.toLowerCase().endsWith('@gmail.com')) return 'Please use a Gmail address (example@gmail.com).';
+		return '';
+	}
+
+	function validateUsername(value){
+		if(!value || !value.trim()) return 'Username is required.';
+		const re = /^[A-Za-z][A-Za-z0-9_]{2,19}$/; // start with letter, 3-20 chars
+		if(!re.test(value)) return 'Username must start with a letter and be 3-20 characters (letters, numbers, underscore).';
+		return '';
+	}
+
+	function validatePassword(value){
+		if(!value) return 'Password is required.';
+		if(value.length < 8) return 'Password must be at least 8 characters.';
+		if(!/[A-Z]/.test(value) || !/[a-z]/.test(value) || !/\d/.test(value)){
+			return 'Password must include uppercase, lowercase, and a number.';
+		}
+		return '';
+	}
+
+	form.addEventListener('submit', function(e){
+		e.preventDefault();
+		// clear messages
+		nameErr.style.display = 'none';
+		emailErr.style.display = 'none';
+		pwdErr.style.display = 'none';
+		confirmErr.style.display = 'none';
+		success.style.display = 'none';
+
+		const nameVal = fullName.value;
+		const userVal = username.value.trim();
+		const emailVal = email.value.trim();
+		const pwdVal = password.value;
+		const confVal = confirmPassword.value;
+
+		const nErr = validateName(nameVal);
+		const uErr = validateUsername(userVal);
+		const eErr = validateEmail(emailVal);
+		const pErr = validatePassword(pwdVal);
+		const cErr = (pwdVal !== confVal) ? 'Passwords do not match.' : '';
+
+		let ok = true;
+		if(nErr){ nameErr.textContent = nErr; nameErr.style.display = 'block'; ok = false; }
+		if(uErr){ usernameErr.textContent = uErr; usernameErr.style.display = 'block'; ok = false; }
+		if(eErr){ emailErr.textContent = eErr; emailErr.style.display = 'block'; ok = false; }
+		if(pErr){ pwdErr.textContent = pErr; pwdErr.style.display = 'block'; ok = false; }
+		if(cErr){ confirmErr.textContent = cErr; confirmErr.style.display = 'block'; ok = false; }
+
+		if(!ok) return;
+
+		// Simulate account creation
+		success.textContent = 'Account created successfully. You may now sign in.';
+		success.style.display = 'block';
+		// clear form
+		fullName.value = '';
+		username.value = '';
+		email.value = '';
+		password.value = '';
+		confirmPassword.value = '';
+    
+		// Optionally, send data to server here using fetch
+	});
+})();
+</script>
