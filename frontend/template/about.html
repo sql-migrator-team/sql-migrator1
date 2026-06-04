@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Migrator - About System</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#111;
+    color:white;
+}
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
+
+.sidebar{
+    width:260px;
+    background:#1c1c1c;
+    border-right:1px solid #333;
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    padding:30px;
+    border-bottom:1px solid #333;
+}
+
+.logo h2{
+    color:white;
+}
+
+.admin-title{
+    padding:20px 30px;
+    color:#999;
+    font-size:14px;
+}
+
+.sidebar ul{
+    list-style:none;
+}
+
+.sidebar li{
+    padding:16px 30px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.sidebar li:hover{
+    background:#2a2a2a;
+}
+
+.active{
+    background:#e8e3ff;
+    color:#3f37c9;
+    border-radius:10px;
+    margin:5px 15px;
+}
+
+.logout{
+    margin-top:auto;
+    padding:30px;
+    border-top:1px solid #333;
+}
+
+.content{
+    flex:1;
+    padding:40px;
+}
+
+.page-title{
+    font-size:36px;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:#bbb;
+    margin-bottom:30px;
+}
+
+.card{
+    background:#1d1d1d;
+    border:1px solid #333;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.card h2{
+    color:#fff;
+    margin-bottom:20px;
+    font-size:28px;
+}
+
+.card p{
+    color:#d0d0d0;
+    line-height:1.9;
+    margin-bottom:18px;
+    font-size:15px;
+}
+
+@media(max-width:900px){
+    .container{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+    }
+
+    .content{
+        padding:20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>SQL Migrator</h2>
+        </div>
+
+        <p class="admin-title">ADMIN</p>
+
+        <ul>
+            <li>Users</li>
+            <li>Migration</li>
+            <li>Migration History</li>
+            <li>Reports</li>
+            <li>Settings</li>
+            <li class="active">About System</li>
+        </ul>
+
+        <div class="logout">
+            Sign Out
+        </div>
+
+    </aside>
+
+    <main class="content">
+
+        <h1 class="page-title">About System</h1>
+
+        <p class="subtitle">
+            Backend-only ETL platform for SQL migration, validation,
+            reporting and schema generation.
+        </p>
+
+        <div class="card">
+
+            <h2>About SQL Migrator</h2>
+
+            <p>
+                SQL Migrator is a backend-only ETL platform designed for
+                SQL-to-SQL database migration, schema generation, file
+                import/export operations, validation, reporting, and
+                migration history management. The system exposes REST APIs
+                that allow administrators and authorized users to execute
+                migration workflows between supported database systems while
+                maintaining secure internal records and reports.
+            </p>
+
+            <p>
+                Built using Flask and SQLAlchemy, the application follows a
+                clean architecture approach that separates authentication,
+                migration processing, validation, reporting, and database
+                connectivity into dedicated modules. Internal application
+                data is stored in SQLite, while external databases are
+                connected dynamically through API request payloads.
+            </p>
+
+            <p>
+                The platform provides user authentication with JWT and
+                role-based access control, SQL migration with datatype
+                mapping, CSV and Excel import/export functionality, schema
+                generation, migration validation, report generation in JSON,
+                Text, and PDF formats, and persistent migration history
+                tracking.
+            </p>
+
+            <p>
+                The backend architecture consists of Processors for CSV and
+                Excel handling, Converters for SQL transformation and export
+                operations, Validators for compatibility verification,
+                Database modules for external connections, Reports modules
+                for document generation, Models for internal storage, and
+                REST API Routes for system access.
+            </p>
+
+            <p>
+                Supported external database engines include MySQL,
+                PostgreSQL, SQLite, and Oracle. Internal SQLite storage
+                maintains users, migrations, migration history, reports,
+                uploaded files, exported files, logs, and system
+                configuration records.
+            </p>
+
+            <p>
+                The technology stack includes Python 3.12+, Flask,
+                Flask-RESTful, Flask-JWT-Extended, SQLAlchemy, Bcrypt,
+                Pandas, OpenPyXL, PyMySQL, psycopg2-binary, cx_Oracle,
+                FPDF, and Pytest. This modular design provides a scalable,
+                maintainable, and extensible foundation for enterprise-grade
+                database migration workflows.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
