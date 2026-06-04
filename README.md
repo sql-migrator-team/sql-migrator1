@@ -142,7 +142,7 @@ cp .env.example .env
 6. Start the application:
 
 ```bash
-python backend/app.py
+python -m backend.app
 ```
 
 ## How to Run the Project
