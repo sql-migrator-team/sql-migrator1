@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Migrator — Users</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+ 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+:root {
+  --bg:        #0f1117;
+  --bg2:       #161b27;
+  --bg3:       #1e2535;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #e8eaf0;
+  --text2:     #8b92a8;
+  --text3:     #555d72;
+  --accent:    #6c63ff;
+  --accent2:   #8b84ff;
+  --accent-bg: rgba(108,99,255,0.12);
+  --success:   #22c55e;
+  --success-bg:rgba(34,197,94,0.1);
+  --warning:   #f59e0b;
+  --warning-bg:rgba(245,158,11,0.1);
+  --danger:    #ef4444;
+  --danger-bg: rgba(239,68,68,0.1);
+  --info:      #38bdf8;
+  --info-bg:   rgba(56,189,248,0.1);
+  --radius:    10px;
+  --radius-lg: 14px;
+  --sidebar-w: 220px;
+  --topbar-h:  56px;
+  --font:      'DM Sans', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+  --transition: 0.18s ease;
+}
+ 
+html, body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  height: 100%;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+ 
+a { text-decoration: none; color: inherit; }
+
+/* ── BUTTONS ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: #5a52e0; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-ghost:hover { background: var(--bg3); color: var(--text); }
+
+.btn-icon {
+  width: 32px; height: 32px;
+  padding: 0;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 8px;
+}
+.btn-icon:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+
+.btn-danger-ghost {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid rgba(239,68,68,0.2);
+}
+.btn-danger-ghost:hover { background: var(--danger-bg); }
+
+/* ── FORM ELEMENTS ───────────────────────────────────── */
+.form-group { margin-bottom: 18px; }
+
+.form-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 7px;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: var(--font);
+  outline: none;
+  transition: border-color var(--transition);
+}
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--text3); }
+.form-select option { background: var(--bg2); }
+
+.form-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.form-checkbox-row input[type="checkbox"] {
+  width: 15px; height: 15px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* admin.css */
+/* ── LAYOUT ─────────────────────────────────────────── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+ 
+/* ── SIDEBAR ─────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+ 
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+ 
+.logo-icon {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+ 
+.logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.logo-text span { color: var(--accent2); }
+ 
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 18px 18px 6px;
+}
+ 
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  margin: 2px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--text2);
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+}
+ 
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active {
+  background: var(--accent-bg);
+  color: var(--accent2);
+  font-weight: 500;
+}
+ 
+.nav-item .nav-icon { font-size: 17px; flex-shrink: 0; }
+ 
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 8px;
+  border-top: 1px solid var(--border);
+}
+ 
+/* ── MAIN ─────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+ 
+/* ── TOPBAR ──────────────────────────────────────────── */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+ 
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.page-title { font-size: 16px; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* ── CONTENT ─────────────────────────────────────────── */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
+
+/* ── STAT CARDS ──────────────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+
+.stat-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.stat-sub {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+/* ── SECTION CARD ───────────────────────────────────── */
+.section-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ── TABLE ───────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+.td-muted { color: var(--text2); font-size: 12.5px; }
+.td-mono  { font-family: var(--mono); font-size: 12px; color: var(--text2); }
+
+/* ── BADGE ───────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-success { background: var(--success-bg); color: var(--success); }
+.badge-warning { background: var(--warning-bg); color: var(--warning); }
+.badge-danger  { background: var(--danger-bg);  color: var(--danger);  }
+.badge-info    { background: var(--info-bg);    color: var(--info);    }
+.badge-accent  { background: var(--accent-bg);  color: var(--accent2); }
+.badge-neutral { background: var(--bg3); color: var(--text2); }
+
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* ── AVATAR ──────────────────────────────────────────── */
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ── SEARCH ─────────────────────────────────────────── */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-size: 13px;
+  color: var(--text2);
+  width: 200px;
+  transition: border-color var(--transition);
+}
+.search-box:focus-within { border-color: var(--accent); }
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  width: 100%;
+}
+.search-box input::placeholder { color: var(--text3); }
+
+/* ── TOGGLE ──────────────────────────────────────────── */
+.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+
+.toggle {
+  width: 38px; height: 21px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--accent); border-color: var(--accent); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 13px; height: 13px;
+  background: var(--text2);
+  border-radius: 50%;
+  transition: left var(--transition), background var(--transition);
+}
+.toggle.on::after { left: 20px; background: #fff; }
+
+/* ── SETTINGS ROW ────────────────────────────────────── */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row-info .settings-row-title { font-size: 13.5px; font-weight: 500; }
+.settings-row-info .settings-row-desc  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+.settings-section-label {
+  padding: 16px 20px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── UPLOAD ZONE ─────────────────────────────────────── */
+.upload-zone {
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+.upload-zone:hover { border-color: var(--accent); background: var(--accent-bg); }
+.upload-zone-icon { font-size: 28px; color: var(--text3); margin-bottom: 8px; }
+.upload-zone-text { font-size: 13px; color: var(--text2); }
+.upload-zone-sub  { font-size: 11.5px; color: var(--text3); margin-top: 4px; }
+
+/* ── DB BADGE ────────────────────────────────────────── */
+.db-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  margin-bottom: 14px;
+}
+.db-pill-name { font-size: 14px; font-weight: 600; }
+.db-pill-label { margin-left: auto; }
+
+/* ── REPORT ROW ──────────────────────────────────────── */
+.report-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.report-row:last-child { border-bottom: none; }
+.report-icon {
+  width: 38px; height: 38px;
+  background: var(--bg3);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.report-info { flex: 1; }
+.report-name { font-size: 13.5px; font-weight: 500; }
+.report-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* ── MISC ────────────────────────────────────────────── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.col-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+.tag { font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500; }
+
+.breadcrumb {
+  font-size: 12px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.breadcrumb span { color: var(--text2); }
+
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="ti ti-database" style="color:#fff;font-size:16px"></i></div>
+      <span class="logo-text">SQL <span>Migrator</span></span>
+    </div>
+    <nav style="flex:1;padding-top:8px">
+      <div class="nav-section-label">Admin</div>
+      <a href="admin_users.html"     class="nav-item active"><i class="ti ti-users nav-icon"></i>Users</a>
+      <a href="admin_history.html"   class="nav-item"><i class="ti ti-history nav-icon"></i>Migration history</a>
+      <a href="reports.html"   class="nav-item"><i class="ti ti-chart-bar nav-icon"></i>Reports</a>
+      <a href="admin_settings.html"  class="nav-item"><i class="ti ti-settings nav-icon"></i>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="login.html" class="nav-item" style="color:#ef4444"><i class="ti ti-logout nav-icon"></i>Sign out</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title">Users</span>
+        <div class="breadcrumb"><i class="ti ti-chevron-right" style="font-size:13px"></i><span>Manage accounts</span></div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <i class="ti ti-search" style="font-size:15px;flex-shrink:0"></i>
+          <input type="text" placeholder="Search users…">
+        </div>
+        <button class="btn btn-ghost"><i class="ti ti-filter" style="font-size:15px"></i>Filter</button>
+        <button class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>Add user</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--accent-bg);color:var(--accent2)"><i class="ti ti-users"></i></div>
+          <div class="stat-label">Total users</div>
+          <div class="stat-value">24</div>
+          <div class="stat-sub">+3 this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--success-bg);color:var(--success)"><i class="ti ti-circle-check"></i></div>
+          <div class="stat-label">Active</div>
+          <div class="stat-value" style="color:var(--success)">20</div>
+          <div class="stat-sub">83% of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--info-bg);color:var(--info)"><i class="ti ti-shield-check"></i></div>
+          <div class="stat-label">Admins</div>
+          <div class="stat-value" style="color:var(--info)">3</div>
+          <div class="stat-sub">Full access</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)"><i class="ti ti-user-off"></i></div>
+          <div class="stat-label">Inactive</div>
+          <div class="stat-value" style="color:var(--warning)">4</div>
+          <div class="stat-sub">Suspended</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">All users</span>
+          <button class="btn btn-ghost" style="font-size:12px"><i class="ti ti-download" style="font-size:14px"></i>Export</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:44px"></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Migrations</th>
+                <th>Last login</th>
+                <th style="width:80px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="avatar" style="background:#3c3489;color:#cecbf6">AK</div></td>
+                <td style="font-weight:500">Arjun Kumar</td>
+                <td class="td-muted">arjun@example.com</td>
+                <td><span class="badge badge-accent">Admin</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="td-muted">47</td>
+                <td class="td-muted">Today, 10:32 AM</td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-icon" title="Edit"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                    <button class="btn btn-icon" title="Delete" style="color:var(--danger);border-color:rgba(239,68,68,.2)"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="avatar" style="background:#085041;color:#9fe1cb">PV</div></td>
+                <td style="font-weight:500">Priya Varma</td>
+                <td class="td-muted">priya@example.com</td>
+                <td><span class="badge badge-neutral">User</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="td-muted">23</td>
+                <td class="td-muted">Yesterday</td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-icon" title="Edit"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                    <button class="btn btn-icon" title="Delete" style="color:var(--danger);border-color:rgba(239,68,68,.2)"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="avatar" style="background:#633806;color:#fac775">RN</div></td>
+                <td style="font-weight:500">Rahul Nair</td>
+                <td class="td-muted">rahul@example.com</td>
+                <td><span class="badge badge-neutral">User</span></td>
+                <td><span class="badge badge-warning">Inactive</span></td>
+                <td class="td-muted">8</td>
+                <td class="td-muted">2 weeks ago</td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-icon" title="Edit"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                    <button class="btn btn-icon" title="Delete" style="color:var(--danger);border-color:rgba(239,68,68,.2)"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="avatar" style="background:#712b13;color:#f5c4b3">SM</div></td>
+                <td style="font-weight:500">Sneha Menon</td>
+                <td class="td-muted">sneha@example.com</td>
+                <td><span class="badge badge-accent">Admin</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="td-muted">61</td>
+                <td class="td-muted">Today, 09:14 AM</td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-icon" title="Edit"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                    <button class="btn btn-icon" title="Delete" style="color:var(--danger);border-color:rgba(239,68,68,.2)"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="avatar" style="background:#0c447c;color:#b5d4f4">MK</div></td>
+                <td style="font-weight:500">Meera Krishna</td>
+                <td class="td-muted">meera@example.com</td>
+                <td><span class="badge badge-neutral">User</span></td>
+                <td><span class="badge badge-danger">Suspended</span></td>
+                <td class="td-muted">2</td>
+                <td class="td-muted">1 month ago</td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-icon" title="Edit"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                    <button class="btn btn-icon" title="Delete" style="color:var(--danger);border-color:rgba(239,68,68,.2)"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main><!-- /main -->
+</div><!-- /app -->
+
+</body>
+</html>
