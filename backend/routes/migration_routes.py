@@ -109,18 +109,43 @@ class FileImportResource(Resource):
 
     def post(self):
         payload = request.get_json(silent=True) or {}
-        defaults = {
-            "file_path": None,
-            "target_db_type": "sqlite",
-            "target_database": "./backend/database/app_data.db",
-            "target_table": None,
-            "if_exists": "append",
-        }
-        if not payload:
-            payload = get_placeholder_data(defaults)
 
-        import_result = import_file_to_sql(payload)
-        return {"message": "File import completed.", "result": import_result}, 200
+        # Validate request body
+        if not payload:
+            return {
+                "message": "Request body is required."
+            }, 400
+
+        file_path = payload.get("file_path")
+
+        if not file_path:
+            return {
+                "message": "file_path is required."
+            }, 400
+
+        if "<FRONTEND" in str(file_path):
+            return {
+                "message": "Replace placeholder file path with a real file path."
+            }, 400
+
+        try:
+            import_result = import_file_to_sql(payload)
+
+            return {
+                "message": "File import completed.",
+                "result": import_result
+            }, 200
+
+        except FileNotFoundError:
+            return {
+                "message": f"File not found: {file_path}"
+            }, 404
+
+        except Exception as exc:
+            return {
+                "message": "File import failed.",
+                "error": str(exc)
+            }, 500
 
 
 class SqlExportResource(Resource):
