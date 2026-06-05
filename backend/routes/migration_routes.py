@@ -153,21 +153,37 @@ class SqlExportResource(Resource):
 
     def post(self):
         payload = request.get_json(silent=True) or {}
-        defaults = {
-            "source_db_type": "sqlite",
-            "source_database": "./backend/database/app_data.db",
-            "source_table": None,
-            "columns": [],
-            "filters": None,
-            "export_format": "csv",
-            "export_path": None,
-        }
+
         if not payload:
-            payload = get_placeholder_data(defaults)
+            return {
+                "message": "Request body is required."
+            }, 400
 
-        export_result = export_sql_to_file(payload)
-        return {"message": "Export completed.", "result": export_result}, 200
+        source_table = payload.get("source_table")
 
+        if not source_table:
+            return {
+                "message": "source_table is required."
+            }, 400
+
+        try:
+            export_result = export_sql_to_file(payload)
+
+            return {
+                "message": "Export completed.",
+                "result": export_result
+            }, 200
+
+        except ValueError as exc:
+            return {
+                "message": str(exc)
+            }, 400
+
+        except Exception as exc:
+            return {
+                "message": "Export failed.",
+                "error": str(exc)
+            }, 500
 
 class SchemaGeneratorResource(Resource):
     """Endpoint to generate CREATE TABLE schema from a file."""
