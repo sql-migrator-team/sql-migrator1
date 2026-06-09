@@ -120,12 +120,35 @@ SQL_migrator/
 cd '/home/ark/Downloads/new sql/SQL_migrator'
 python3 -m venv .venv
 ```
+For pip upgrade on Windows:
+
+```
+python.exe -m pip install --upgrade pip
+```
+
+For pip upgrade on MacOS/Linux:
+
+```
+python -m pip install --upgrade pip
+```
+
+or 
+
+```
+python3 -m pip install --upgrade pip
+```
 
 3. Activate the virtual environment:
+
+For MacOS/Linux
 
 ```bash
 source .venv/bin/activate
 ```
+For Windows
+```
+.\.venv\Scripts\Activate.ps1
+ ```
 
 4. Install dependencies:
 
